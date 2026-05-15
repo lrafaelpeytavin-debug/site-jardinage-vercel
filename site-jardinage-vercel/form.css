@@ -1,0 +1,15 @@
+.field-hidden {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-note.is-success {
+  color: #1f6f43;
+}
+
+.form-note.is-error {
+  color: #a33a2c;
+}
