@@ -158,7 +158,7 @@
             </p>
           </div>
 
-          <form class="contact-form" action="mailto:lucas.benavenuto@lakle.fr" method="post" enctype="text/plain">
+          <form class="contact-form" action="/api/contact" method="post" data-contact-form>
             <label>
               Nom
               <input type="text" name="Nom" placeholder="Votre nom" required>
@@ -175,8 +175,12 @@
               Projet
               <textarea name="Projet" rows="5" placeholder="Décrivez le jardin, les travaux souhaités et la période idéale." required></textarea>
             </label>
+            <label class="field-hidden" aria-hidden="true">
+              Site web
+              <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
             <button class="button primary" type="submit">Envoyer la demande</button>
-            <p class="form-note">Vous pouvez aussi joindre des photos du jardin lors du premier échange.</p>
+            <p class="form-note" data-form-status>Vous pouvez aussi joindre des photos du jardin lors du premier échange.</p>
           </form>
         </div>
       </section>
