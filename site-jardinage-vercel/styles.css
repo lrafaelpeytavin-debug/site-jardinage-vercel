@@ -473,10 +473,26 @@ h3 {
   width: 100%;
 }
 
+.field-hidden {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .form-note {
   margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.form-note.is-success {
+  color: #1f6f43;
+}
+
+.form-note.is-error {
+  color: #a33a2c;
 }
 
 .site-footer {
@@ -524,12 +540,15 @@ h3 {
   .hero {
     min-height: auto;
     padding-top: 132px;
-    padding-bottom: 260px;
+    padding-bottom: 36px;
+    gap: 26px;
   }
 
   .hero-card {
-    right: 18px;
-    bottom: 28px;
+    position: static;
+    width: 100%;
+    max-width: 520px;
+    margin-top: 8px;
   }
 
   .intro,
@@ -559,12 +578,17 @@ h3 {
     padding-right: 18px;
   }
 
+  .hero-text {
+    margin-bottom: 22px;
+  }
+
   .hero-actions .button {
     width: 100%;
   }
 
   .hero-card {
     grid-template-columns: 1fr;
+    max-width: none;
   }
 
   .section {
