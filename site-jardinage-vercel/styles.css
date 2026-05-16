@@ -453,6 +453,7 @@ h3 {
 }
 
 .contact-form input,
+.contact-form select,
 .contact-form textarea {
   width: 100%;
   border: 1px solid #d5d0c6;
@@ -464,6 +465,7 @@ h3 {
 }
 
 .contact-form input:focus,
+.contact-form select:focus,
 .contact-form textarea:focus {
   border-color: var(--moss);
   outline: 3px solid rgba(85, 116, 91, 0.18);
