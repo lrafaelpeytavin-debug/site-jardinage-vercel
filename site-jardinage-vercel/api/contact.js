@@ -6,6 +6,12 @@ function sanitize(value) {
   return String(value || "").trim().slice(0, 2000);
 }
 
+function sanitizeFilename(value) {
+  return String(value || "photo-jardin.jpg")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .slice(0, 100);
+}
+
 function json(response, status, payload) {
   response.status(status).setHeader("Content-Type", "application/json");
   response.end(JSON.stringify(payload));
@@ -27,6 +33,7 @@ export default async function handler(request, response) {
   const phone = sanitize(body.Telephone);
   const city = sanitize(body.Commune);
   const project = sanitize(body.Projet);
+  const photos = Array.isArray(body.Photos) ? body.Photos.slice(0, 3) : [];
 
   if (!name || !phone || !city || !project) {
     return json(response, 400, { message: "Merci de remplir tous les champs." });
@@ -48,6 +55,14 @@ export default async function handler(request, response) {
     project,
   ].join("\n");
 
+  const attachments = photos
+    .filter((photo) => photo && photo.content && photo.filename)
+    .map((photo) => ({
+      filename: sanitizeFilename(photo.filename),
+      content: String(photo.content),
+      content_type: String(photo.content_type || "image/jpeg"),
+    }));
+
   const resendResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -60,6 +75,7 @@ export default async function handler(request, response) {
       subject: `Demande de devis jardinage - ${city}`,
       text,
       reply_to: CONTACT_TO_EMAIL,
+      attachments,
     }),
   });
 
