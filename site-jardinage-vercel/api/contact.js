@@ -32,6 +32,7 @@ export default async function handler(request, response) {
   const name = sanitize(body.Nom);
   const phone = sanitize(body.Telephone);
   const email = sanitize(body.Email).slice(0, 320);
+  const contactPreference = sanitize(body.PreferenceContact) || "Peu importe";
   const city = sanitize(body.Commune);
   const project = sanitize(body.Projet);
   const photos = Array.isArray(body.Photos) ? body.Photos.slice(0, 3) : [];
@@ -55,6 +56,7 @@ export default async function handler(request, response) {
     `Nom: ${name}`,
     `Téléphone: ${phone}`,
     `Email: ${email || "Non renseigné"}`,
+    `Préférence de contact: ${contactPreference}`,
     `Commune: ${city}`,
     "",
     "Projet:",
