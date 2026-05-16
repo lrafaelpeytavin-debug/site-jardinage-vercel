@@ -26,12 +26,54 @@ syncHeader();
 window.addEventListener("scroll", syncHeader, { passive: true });
 
 if (contactForm && formStatus) {
+  function readCompressedImage(file) {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith("image/")) {
+        reject(new Error("Seules les images sont acceptées."));
+        return;
+      }
+
+      if (file.size > 12 * 1024 * 1024) {
+        reject(new Error("Une image est trop lourde."));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const maxSize = 1600;
+          const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(image.width * scale);
+          canvas.height = Math.round(image.height * scale);
+
+          const context = canvas.getContext("2d");
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.72);
+          resolve({
+            filename: file.name.replace(/\.[^.]+$/, "") + ".jpg",
+            content: dataUrl.split(",")[1],
+            content_type: "image/jpeg",
+          });
+        };
+        image.onerror = () => reject(new Error("Une image n’a pas pu être lue."));
+        image.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error("Une image n’a pas pu être lue."));
+      reader.readAsDataURL(file);
+    });
+  }
+
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const submitButton = contactForm.querySelector("button[type='submit']");
     const formData = new FormData(contactForm);
     const payload = Object.fromEntries(formData.entries());
+    const photoInput = contactForm.querySelector("input[name='Photos']");
+    const photoFiles = Array.from(photoInput?.files || []);
 
     submitButton.disabled = true;
     submitButton.textContent = "Envoi en cours...";
@@ -39,6 +81,12 @@ if (contactForm && formStatus) {
     formStatus.textContent = "Votre demande est en cours d’envoi.";
 
     try {
+      if (photoFiles.length > 3) {
+        throw new Error("Vous pouvez joindre 3 photos maximum.");
+      }
+
+      payload.Photos = await Promise.all(photoFiles.map(readCompressedImage));
+
       const response = await fetch(contactForm.action, {
         method: "POST",
         headers: {
@@ -58,7 +106,7 @@ if (contactForm && formStatus) {
       formStatus.textContent = "Merci, votre demande a bien été envoyée. Nous revenons vers vous rapidement.";
     } catch (error) {
       formStatus.className = "form-note is-error";
-      formStatus.textContent = "Impossible d’envoyer la demande pour le moment. Vous pouvez écrire à lucas.benavenuto@lakle.fr.";
+      formStatus.textContent = error.message || "Impossible d’envoyer la demande pour le moment. Vous pouvez écrire à lucas.benavenuto@lakle.fr.";
     } finally {
       submitButton.disabled = false;
       submitButton.textContent = "Envoyer la demande";
