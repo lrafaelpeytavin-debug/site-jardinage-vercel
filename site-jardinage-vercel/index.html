@@ -176,9 +176,14 @@
               Projet
               <textarea name="Projet" rows="5" placeholder="Décrivez le jardin, les travaux souhaités et la période idéale." required></textarea>
             </label>
-            <label>
+            <label class="photo-field">
               Photos du jardin
-              <input type="file" name="Photos" accept="image/*" multiple>
+              <span class="file-picker">
+                <input type="file" name="Photos" accept="image/*" multiple data-photo-input>
+                <span class="file-picker-button">Ajouter des photos</span>
+              </span>
+              <span class="photo-help">Vous pouvez ajouter les photos une par une ou plusieurs à la fois.</span>
+              <span class="photo-list" data-photo-list>Aucune photo ajoutée.</span>
             </label>
             <label class="field-hidden" aria-hidden="true">
               Site web
