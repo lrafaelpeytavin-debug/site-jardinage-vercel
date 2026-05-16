@@ -10,6 +10,7 @@ Landing page statique pour une activité d'entretien de jardin, d'aménagement p
 ## Formulaire de contact
 
 Le formulaire envoie les demandes via la fonction Vercel `api/contact.js`.
+Il accepte aussi jusqu'à 3 photos du jardin, compressées côté navigateur puis envoyées en pièces jointes.
 
 Variables d'environnement à ajouter dans Vercel :
 
