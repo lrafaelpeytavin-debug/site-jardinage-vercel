@@ -176,12 +176,16 @@
               Projet
               <textarea name="Projet" rows="5" placeholder="Décrivez le jardin, les travaux souhaités et la période idéale." required></textarea>
             </label>
+            <label>
+              Photos du jardin
+              <input type="file" name="Photos" accept="image/*" multiple>
+            </label>
             <label class="field-hidden" aria-hidden="true">
               Site web
               <input type="text" name="website" tabindex="-1" autocomplete="off">
             </label>
             <button class="button primary" type="submit">Envoyer la demande</button>
-            <p class="form-note" data-form-status>Vous pouvez aussi joindre des photos du jardin lors du premier échange.</p>
+            <p class="form-note" data-form-status>Vous pouvez joindre jusqu’à 3 photos du jardin pour faciliter le devis.</p>
           </form>
         </div>
       </section>
