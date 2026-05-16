@@ -31,12 +31,17 @@ export default async function handler(request, response) {
 
   const name = sanitize(body.Nom);
   const phone = sanitize(body.Telephone);
+  const email = sanitize(body.Email).slice(0, 320);
   const city = sanitize(body.Commune);
   const project = sanitize(body.Projet);
   const photos = Array.isArray(body.Photos) ? body.Photos.slice(0, 3) : [];
 
   if (!name || !phone || !city || !project) {
     return json(response, 400, { message: "Merci de remplir tous les champs." });
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json(response, 400, { message: "Merci d’indiquer une adresse email valide." });
   }
 
   if (!RESEND_API_KEY) {
@@ -49,6 +54,7 @@ export default async function handler(request, response) {
     "",
     `Nom: ${name}`,
     `Téléphone: ${phone}`,
+    `Email: ${email || "Non renseigné"}`,
     `Commune: ${city}`,
     "",
     "Projet:",
@@ -74,7 +80,7 @@ export default async function handler(request, response) {
       to: [CONTACT_TO_EMAIL],
       subject: `Demande de devis jardinage - ${city}`,
       text,
-      reply_to: CONTACT_TO_EMAIL,
+      reply_to: email || CONTACT_TO_EMAIL,
       attachments,
     }),
   });
