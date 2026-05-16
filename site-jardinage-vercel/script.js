@@ -3,6 +3,9 @@ const nav = document.querySelector("[data-nav]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const contactForm = document.querySelector("[data-contact-form]");
 const formStatus = document.querySelector("[data-form-status]");
+const photoInput = document.querySelector("[data-photo-input]");
+const photoList = document.querySelector("[data-photo-list]");
+let selectedPhotos = [];
 
 function syncHeader() {
   header.classList.toggle("is-scrolled", window.scrollY > 12);
@@ -24,6 +27,44 @@ nav.addEventListener("click", (event) => {
 
 syncHeader();
 window.addEventListener("scroll", syncHeader, { passive: true });
+
+function syncPhotoList() {
+  if (!photoList) {
+    return;
+  }
+
+  if (!selectedPhotos.length) {
+    photoList.textContent = "Aucune photo ajoutée.";
+    return;
+  }
+
+  photoList.textContent = selectedPhotos
+    .map((file, index) => `${index + 1}. ${file.name}`)
+    .join(" • ");
+}
+
+if (photoInput) {
+  photoInput.addEventListener("change", () => {
+    const incomingFiles = Array.from(photoInput.files || []);
+    const mergedFiles = [...selectedPhotos];
+
+    incomingFiles.forEach((file) => {
+      const alreadySelected = mergedFiles.some((selectedFile) =>
+        selectedFile.name === file.name &&
+        selectedFile.size === file.size &&
+        selectedFile.lastModified === file.lastModified
+      );
+
+      if (!alreadySelected && mergedFiles.length < 3) {
+        mergedFiles.push(file);
+      }
+    });
+
+    selectedPhotos = mergedFiles;
+    photoInput.value = "";
+    syncPhotoList();
+  });
+}
 
 if (contactForm && formStatus) {
   function readCompressedImage(file) {
@@ -72,8 +113,7 @@ if (contactForm && formStatus) {
     const submitButton = contactForm.querySelector("button[type='submit']");
     const formData = new FormData(contactForm);
     const payload = Object.fromEntries(formData.entries());
-    const photoInput = contactForm.querySelector("input[name='Photos']");
-    const photoFiles = Array.from(photoInput?.files || []);
+    const photoFiles = selectedPhotos;
 
     submitButton.disabled = true;
     submitButton.textContent = "Envoi en cours...";
@@ -102,6 +142,8 @@ if (contactForm && formStatus) {
       }
 
       contactForm.reset();
+      selectedPhotos = [];
+      syncPhotoList();
       formStatus.className = "form-note is-success";
       formStatus.textContent = "Merci, votre demande a bien été envoyée. Nous revenons vers vous rapidement.";
     } catch (error) {
